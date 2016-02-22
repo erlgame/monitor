@@ -1,0 +1,9 @@
+{application,monitor,
+             [{description,[]},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[kernel,stdlib,lager,cowboy]},
+              {mod,{monitor_app,[]}},
+              {env,[]},
+              {modules,[config,mochijson2,monitor_app,monitor_sup,monitor_svr,
+                        web_server]}]}.

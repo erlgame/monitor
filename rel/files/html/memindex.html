@@ -1,0 +1,113 @@
+
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Server Monitor</title>
+
+        <script type="text/javascript" src="http://cdn.hcharts.cn/jquery/jquery-1.8.3.min.js"></script>
+        <style type="text/css">
+${demo.css}
+        </style>
+
+<script type="text/javascript">
+var GLOBAL_VAR = {
+  LastCliTime: 0,
+  LastSvrTime: 0,
+  LastRecv: 0,
+  LastSend: 0
+};
+
+var chart;
+var Interval_Time = 5000;
+
+$(function(){
+    $(document).ready(function() {
+      Highcharts.setOptions({
+        global: {
+          useUTC: false//是否使用世界标准时间
+        }
+      });
+      //var chart;
+      chart = new Highcharts.Chart({
+        chart: {
+          renderTo: 'container',
+          type: 'spline',
+          marginRight: 10,
+          events: {
+            load: function() {
+                setInterval(function() {
+                  getMemInfo();
+                }, Interval_Time);
+            }
+          }
+        },
+        title: {
+          text: 'vvgame.com.cn'
+        },
+        xAxis: {
+          type: 'datetime',
+          tickPixelInterval: 150
+        },
+        yAxis: {
+          title: {
+            text: 'Value'
+          },
+          plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+          }]
+        },
+        tooltip: {
+          formatter: function () {
+            return '<b>' + this.series.name + '</b><br/>' +
+        Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+        Highcharts.numberFormat(this.y, 2);
+          }
+        },
+        //图例属性
+        legend: {
+          layout: 'vertical',
+          align: 'right',
+          verticalAlign: 'top',
+          borderWidth: 0
+      },
+        exporting: {
+          enabled: false
+        },
+        series: [{                                                            
+          name: 'Mem Info (MB)',
+          data: []                                                             
+        }]
+      });
+    });
+  });
+
+function getMemInfo() {
+    
+    $.ajax({
+      type: "GET",
+      url: "/meminfo",
+      async: true,
+      success: function(result){
+        var res = JSON.parse(result);
+        var series = chart.series[0];
+        var shift = series.data.length > 20;
+        var time = (new Date()).getTime();
+        var value = parseInt(res.MemUsed) / 1000;
+        series.addPoint(eval([time, value]), true, shift);
+      }
+    }); 
+  }
+
+</script>
+</head>
+<body>
+<script src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
+<script src="http://cdn.hcharts.cn/highcharts/modules/exporting.js"></script>
+
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+</body>
+</html>

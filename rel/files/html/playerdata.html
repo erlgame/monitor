@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Player Data</title>
+		
+		
+		<!-- 1. Add these JavaScript inclusions in the head of your page -->
+		<script type="text/javascript" src="http://cdn.hcharts.cn/jquery/jquery-1.8.3.min.js"></script>
+		<!-- <script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script> -->
+		
+		
+		<!-- 2. Add the JavaScript to initialize the chart on document ready -->
+		<script type="text/javascript">
+
+		var charts;
+
+		$(document).ready(function() {
+			
+
+			var options = {
+				chart: {
+					renderTo: 'container',
+					type: 'column'
+				},
+				title: {
+					text: 'Player Data'
+				},
+				xAxis: {
+					categories: []
+				},
+				yAxis: {
+					title: {
+						text: 'Units'
+					}
+				},
+				series: [{
+					name: 'Download',
+					data: []
+				}, {
+					name: 'Register',
+					data: []
+				}, {
+					name: 'Login',
+					data: []
+				}, {
+					name: 'Verify',
+					data: []
+				}, {
+					name: 'PCU',
+					data: []
+				}
+				]
+			};
+			
+
+			$.get('/playerinfo?days=30', function(retData) {
+				
+				var result = JSON.parse(retData);
+				for(var i = 0; i < result.length; i++) {
+					var item = result[i];
+					options.xAxis.categories.push(item.date);
+				}
+
+				for (var j = 0; j < options.series.length; j++) {
+					var series = options.series[j];
+					
+					for (var k = 0; k < result.length; k++) {
+						var item = result[k];
+						switch (j) {
+							case 0:
+							    series.data.push(item.download);
+							    break;
+							case 1:
+							    series.data.push(item.register);
+							    break;
+							case 2:
+							    series.data.push(item.login);
+							    break;
+							case 3:
+							    series.data.push(item.verify);
+							    break;
+							case 4:
+							    series.data.push(item.pcu);
+							    break;
+						}
+					}
+				};
+				
+				charts = new Highcharts.Chart(options);
+			});
+			
+			
+		});
+		</script>
+		
+	</head>
+	<body>
+		<script src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
+        <script src="http://cdn.hcharts.cn/highcharts/modules/exporting.js"></script>
+		<!-- 3. Add the container -->
+		<div id="container" style="width: 800px; height: 400px; margin: 0 auto"></div>
+		
+				
+	</body>
+</html>

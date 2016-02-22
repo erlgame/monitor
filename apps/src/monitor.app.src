@@ -1,0 +1,14 @@
+{application, monitor,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+                  lager,
+                  cowboy
+                 ]},
+  {mod, { monitor_app, []}},
+  {env, []}
+ ]}.
